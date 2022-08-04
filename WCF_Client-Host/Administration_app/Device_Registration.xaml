@@ -1,0 +1,21 @@
+﻿<Window x:Class="Administration_app.Device_Registration"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Administration_app"
+        mc:Ignorable="d"
+        Title="Device Registration" Height="177.273" Width="471.488" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="93*"/>
+            <RowDefinition Height="55*"/>
+        </Grid.RowDefinitions>
+        <Label Name="TitleLabel" Content="New device detected...!" HorizontalAlignment="Left" Margin="15,10,10,10" VerticalAlignment="Top" FontSize="16" FontWeight="Bold"/>
+        
+        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button Name="YesBtn" Content="YES" Width="80" Height="25" Margin="10" Grid.Row="1" Click="YesBtn_Click" />
+            <Button Name="NoBtn" Content="NO" Width="80" Height="25" Margin="10" Grid.Row="1" Click="NoBtn_Click" />
+        </StackPanel>
+    </Grid>
+</Window>
