@@ -1,0 +1,158 @@
+﻿@page "/"
+@using System.Text
+@using WebCalculator.Client.Data
+@inject HttpClient Http
+@inject ICalculationService CalculationService
+@implements IDisposable
+
+<PageTitle>Index</PageTitle>
+
+<div class="content">
+    <div class="calculator">
+        <input class="expression-display" disabled value="@expression.ToString()" />
+
+        <div class="buttons">
+            <div class="main-buttons">
+                <div class="number-btns">
+                    @foreach (var btn in numbers)
+                    {
+                        string tempValue = btn.Value;
+                        string tempFG = btn.Foreground;
+                        string tempBG = btn.Background;
+        
+                        <button class="calc-btn" style="color: @tempFG; background-color: @tempBG" @onclick="@(() => AddToExpression(tempValue))">@tempValue</button>
+                    }
+                </div>
+    
+                <div class="operation-btns">
+                    @foreach (var operation in operations)
+                    {
+                        string tempValue = operation.Value;
+                        string tempFG = operation.Foreground;
+                        string tempBG = operation.Background;
+        
+                        <button class="calc-btn" style="color: @tempFG; background-color: @tempBG" @onclick="@(() => AddToExpression(tempValue))">@tempValue</button>
+                    }
+                </div>
+            </div>
+
+            <div class="rnd-checkbox" @onclick="ToggleCheckbox">
+                <input type="checkbox" style="margin-left: 8px;" @bind="round"/>
+                <div style="margin-left: 8px;">Zaokrouhlit výsledek</div>
+            </div>
+
+            <button class="result-btn" @onclick="@Calculate">Spočítat</button>
+        </div>
+    </div>
+    
+    <div class="history">
+        <h2 style="text-decoration: underline;">History</h2>
+
+        <br />
+
+        @if (historyList == null)
+        {
+            <div style="font-size: smaller">Loading...</div>
+        }
+        else
+        {
+            @if (historyList.Count == 0)
+            {
+                <div>Málo počítáte.. :)</div>
+            }
+            else
+            {
+                @foreach (var rec in historyList)
+                {
+                    <div class="history-rec">@rec.ToString()</div>
+                }   
+            }
+        }
+
+    </div>
+</div>
+
+
+@code {
+    private event Action OnChange;
+    private StringBuilder expression = new StringBuilder();
+    private List<Button> numbers = Calculator.Numbers;
+    private List<Button> operations = Calculator.Operations;
+    private List<ExpressionResult> historyList;
+    private bool round = false;
+
+
+    private void ToggleCheckbox() => round = !round;
+
+    protected async override void OnInitialized()
+    {
+        historyList = await Task.Run(() => CalculationService.GetHistory()) ?? new List<ExpressionResult>();
+
+        OnChange += StateHasChanged;
+        OnChange.Invoke();
+    }
+
+
+    private void AddToExpression(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return;
+
+        if (expression.ToString() == "Error")
+            expression.Clear();
+
+        if (value == "C")
+        {
+            expression.Clear();
+            return;
+        }
+
+        var operationSymbols = operations.Select(o => o.Value).ToList();
+        operationSymbols.Add(".");
+
+        if (expression.Length == 0 && operationSymbols.Contains(value))
+            return;
+
+        if (operationSymbols.Contains(value))
+        {
+            var lastSymbol = expression.ToString()[expression.Length - 1].ToString();
+
+            if (operationSymbols.Contains(lastSymbol))
+                expression.Remove(expression.Length - 1, 1);
+        }
+
+        expression.Append(value);
+    }
+
+    private async void Calculate()
+    {
+        var expString = expression.ToString();
+
+        if (string.IsNullOrEmpty(expString) || expString == "Error")
+            return;
+
+        var lastSymbol = expString[expString.Length - 1].ToString();
+
+        if (operations.Select(o => o.Value).Contains(lastSymbol))
+            expString.Remove(expString.Length - 1, 1);
+
+
+        var result = await CalculationService.CalculateExpression(expString, round);
+
+
+        if (result != null)
+            historyList.Add(result);
+
+        expression.Clear();
+
+        expression = new StringBuilder(result?.Result ?? "Error");
+
+        OnChange += StateHasChanged;
+        OnChange.Invoke();
+    }
+
+    public void Dispose()
+    {
+        OnChange -= StateHasChanged;
+    }
+}
