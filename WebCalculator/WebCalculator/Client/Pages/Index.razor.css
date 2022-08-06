@@ -1,0 +1,75 @@
+﻿.calc-btn {
+    margin: 8px;
+    width: 45px;
+    height: 45px;
+}
+
+.result-btn {
+    color: white;
+    background-color: darkred;
+    width: 245px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.main-buttons {
+    display: flex;
+}
+
+.number-btns {
+    width: 200px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.operation-btns {
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.expression-display {
+    width: 245px;
+    height: 40px;
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    padding: 2px;
+    background-color: lightblue;
+    text-align: right;
+    font-size: larger;
+    font-weight: bold;
+}
+
+.calculator {
+
+}
+
+.history {
+    margin-left: 30px;
+    width: 280px;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+}
+
+.history-rec {
+    display: flex;
+    border-bottom: 1px solid black;
+    word-wrap: break-word;
+    margin-bottom: 10px;
+}
+
+.rnd-checkbox {
+    display: flex;
+    user-select: none;
+    margin-bottom: 5px;
+    margin-left: 2px;
+    cursor: pointer;
+}
