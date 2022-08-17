@@ -15,13 +15,13 @@ namespace WebCalculator.Server.Services.Internals
         }
         #endregion
 
-        public List<ExpressionResult> GetHistory(int resultCount = 10)
+        public async Task<List<ExpressionResult>> GetHistory(int resultCount = 10)
         {
-            return _context.ExpressionResults
+            return await _context.ExpressionResults
                             .OrderByDescending(er => er.CalculationTime)
                             .Take(resultCount)
                             .OrderBy(er => er.CalculationTime)
-                            .ToList();
+                            .ToListAsync();
         }
 
         public ExpressionResult CalculateExpression(string expression, bool round = false)
@@ -41,10 +41,12 @@ namespace WebCalculator.Server.Services.Internals
             return expressionResult;
         }
 
-        public void SaveCalculatedExpression(ExpressionResult expression)
+        public async Task<bool> SaveCalculatedExpression(ExpressionResult expression)
         {
             _context.ExpressionResults.Add(expression);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
+            return true; // Success
         }
     }
 }

@@ -3,7 +3,7 @@
     public interface ICalculationServiceInternal
     {
         ExpressionResult CalculateExpression(string expression, bool round = false);
-        void SaveCalculatedExpression(ExpressionResult expression);
-        List<ExpressionResult> GetHistory(int resultCount = 10);
+        Task<bool> SaveCalculatedExpression(ExpressionResult expression);
+        Task<List<ExpressionResult>> GetHistory(int resultCount = 10);
     }
 }
