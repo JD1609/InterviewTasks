@@ -19,7 +19,7 @@ namespace WebCalculator.Server.Services
         }
         #endregion
 
-        public GenericResponse<ExpressionResult> CalculateExpression(string expression, bool round = false)
+        public async Task<GenericResponse<ExpressionResult>> CalculateExpression(string expression, bool round = false)
         {
             _logger.LogInformation($"Expression to calculate: {expression}; round: {round}");
 
@@ -35,7 +35,7 @@ namespace WebCalculator.Server.Services
 
                 response.Data = result;
 
-                _calculationServiceInternal.SaveCalculatedExpression(result);
+                await _calculationServiceInternal.SaveCalculatedExpression(result);
 
                 _logger.LogInformation($"Operation successfull, response data:\n{JsonConvert.SerializeObject(result, Formatting.Indented)}");
             }
@@ -51,7 +51,7 @@ namespace WebCalculator.Server.Services
             return response;
         }
 
-        public GenericResponse<List<ExpressionResult>> GetHistory(int resultCount = 10)
+        public async Task<GenericResponse<List<ExpressionResult>>> GetHistory(int resultCount = 10)
         {
             _logger.LogInformation("Request to get history");
 
@@ -63,7 +63,7 @@ namespace WebCalculator.Server.Services
 
             try
             {
-                var data = _calculationServiceInternal.GetHistory(resultCount);
+                var data = await _calculationServiceInternal.GetHistory(resultCount);
 
                 response.Data = data;
 
